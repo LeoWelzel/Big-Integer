@@ -31,5 +31,18 @@ void bigIntToString(BigInt* b, char* string, const int n)
         stringIndex += 2 * WORD_SIZE;
     }
 
-    string[stringIndex] = 0;
+    /* Count leading zeroes. */
+    int firstNonZero = 0;
+    while (string[firstNonZero] == '0' && (firstNonZero + 1) < n)
+        firstNonZero++;
+    
+    /* Ensure zero does not return an empty string. */
+    if (firstNonZero == stringIndex)
+        firstNonZero--;
+    
+    for (int i = 0; i < n - firstNonZero; i++)
+        string[i] = string[i + firstNonZero];
+    
+    /* Null terminate string. */
+    string[n - firstNonZero] = 0;
 }

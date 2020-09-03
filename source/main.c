@@ -5,7 +5,7 @@
 int main()
 {
     BigInt i;
-    bigIntInitialise(&i);
+    bigIntFromInt(&i, 511);
 
     const int stringSize = 1024;
     char string[stringSize];
