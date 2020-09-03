@@ -5,16 +5,20 @@
 
 int main()
 {
-    BigInt i;
+    BigInt bigInt;
     const int stringSize = 256;
 
-    char inputString[8];
-    strcpy(inputString, "3829475");
+    char inputString[32];
+    strcpy(inputString, "1234567890123456789012345678901");
 
-    bigIntFromString(&i, inputString, 8);
-    char string[stringSize];
+    bigIntFromString(&bigInt, inputString, 32);
+    char string[stringSize], string2[stringSize];
+    bigIntToString(&bigInt, string, stringSize);
+    printf("%s\n", string);
 
-    bigIntToString(&i, string, stringSize);
+    rShiftArray(&bigInt, 1);
+    // int x = 5;
+    bigIntToString(&bigInt, string, stringSize);
     printf(string);
     return 0;
 }

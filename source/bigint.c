@@ -1,5 +1,8 @@
 #include "bigint.h"
 
+// static void lShiftArray(BigInt* b, const int numElements);
+// static void rShiftArray(BigInt* b, const int numElements);
+
 void bigIntInitialise(BigInt* b)
 {
     assert(b);
@@ -71,7 +74,7 @@ void bigIntToString(BigInt* b, char* string, const int n)
         firstNonZero++;
     
     /* Ensure zero does not return an empty string. */
-    if (firstNonZero == stringIndex)
+    if (firstNonZero == BIGINT_ARR_SIZE / 4)
         firstNonZero--;
     
     for (int i = 0; i < n - firstNonZero; i++)
@@ -79,4 +82,35 @@ void bigIntToString(BigInt* b, char* string, const int n)
     
     /* Null terminate string. */
     string[n - firstNonZero] = 0;
+}
+
+void bigIntLShift(BigInt* input, BigInt* output, unsigned int numBits)
+{
+    assert(input);
+    assert(output);
+
+    /* If the number of bits to shift is greater than the number of bits in a word, shift array */
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    {
+
+    }
+}
+
+void lShiftArray(BigInt* b, const int numElements)
+{
+    int i;
+    for (i = BIGINT_ARR_SIZE; i >= numElements; i--)
+        b->data[i] = b->data[i - numElements];
+    for (i = 0; i < numElements; i++)
+        b->data[i] = 0;
+}
+
+void rShiftArray(BigInt* b, const int numElements)
+{
+    int i;
+    for (i = 0; i < BIGINT_ARR_SIZE - numElements; i++)
+        b->data[i] = b->data[i + numElements];
+    for (i = BIGINT_ARR_SIZE - 1; i >= BIGINT_ARR_SIZE - numElements; i--)
+        b->data[i] = 0;
 }

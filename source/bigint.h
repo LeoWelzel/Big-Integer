@@ -12,6 +12,7 @@
 #endif
 
 #define BASE_TYPE           unsigned int
+#define DOUBLE_BASE_TYPE    unsigned long long int
 #define WORD_SIZE           sizeof(BASE_TYPE)
 #define SPRINTF_FORMAT_STR  "%.08x"
 #define SSCANF_FORMAT_STR    "%8x"
@@ -34,5 +35,11 @@ BIGINT_FUNC void bigIntFromString(BigInt* b, char* string, const int n);
 /* Conversion. */
 BIGINT_FUNC BASE_TYPE bigIntToInt(BigInt* b);
 BIGINT_FUNC void bigIntToString(BigInt* b, char* string, const int n);
+
+/* Bitwise operations. */
+BIGINT_FUNC void bigIntLShift(BigInt* input, BigInt* output, unsigned int numBits);
+
+BIGINT_FUNC void lShiftArray(BigInt* b, const int numElements);
+BIGINT_FUNC void rShiftArray(BigInt* b, const int numElements);
 
 #endif
