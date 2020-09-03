@@ -1,13 +1,17 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "bigint.h"
 
 int main()
 {
     BigInt i;
-    bigIntFromInt(&i, 511);
+    const int stringSize = 256;
 
-    const int stringSize = 1024;
+    char inputString[8];
+    strcpy(inputString, "3829475");
+
+    bigIntFromString(&i, inputString, 8);
     char string[stringSize];
 
     bigIntToString(&i, string, stringSize);

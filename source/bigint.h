@@ -11,9 +11,10 @@
     #define BIGINT_FUNC
 #endif
 
-#define BASE_TYPE           int
+#define BASE_TYPE           unsigned int
 #define WORD_SIZE           sizeof(BASE_TYPE)
 #define SPRINTF_FORMAT_STR  "%.08x"
+#define SSCANF_FORMAT_STR    "%8x"
 
 /* Use 1024 bit integers for now. */
 #define BIGINT_ARR_SIZE     1024 / (WORD_SIZE * 8)
@@ -28,6 +29,7 @@ struct BigInt
 /* Initialisation. */
 BIGINT_FUNC void bigIntInitialise(BigInt* b);
 BIGINT_FUNC void bigIntFromInt(BigInt* b, const BASE_TYPE i);
+BIGINT_FUNC void bigIntFromString(BigInt* b, char* string, const int n);
 
 /* Conversion. */
 BIGINT_FUNC void bigIntToString(BigInt* b, char* string, const int n);

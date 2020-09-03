@@ -14,6 +14,33 @@ void bigIntFromInt(BigInt* b, const BASE_TYPE i)
     b->data[0] = i;
 }
 
+void bigIntFromString(BigInt* b, char* string, const int n)
+{
+    assert(b);
+    assert(string);
+    assert(n > 0);
+    assert((n % 2) == 0);
+    /* Ensure the string length is a multiple of 2 * the basic type to allow array population. */
+    assert(n % sizeof(BASE_TYPE) * 2 == 0);
+
+    bigIntInitialise(b);
+
+    /* Start here because we are passed a hex string. Each character represents 4 bits. */
+    int stringIndex = n - 2 * WORD_SIZE, arrayIndex = 0;
+    BASE_TYPE buffer;
+
+    while (stringIndex >= 0)
+    {
+        buffer = 0;
+
+        sscanf(&string[stringIndex], SSCANF_FORMAT_STR, &buffer);
+
+        b->data[arrayIndex] = buffer;
+        arrayIndex++;
+        stringIndex -= 2 * WORD_SIZE;
+    }
+}
+
 void bigIntToString(BigInt* b, char* string, const int n)
 {
     assert(b);
