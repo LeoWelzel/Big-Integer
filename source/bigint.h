@@ -15,9 +15,18 @@
 /* Use 1024 bit integers for now. */
 #define BIGINT_ARR_SIZE     128 / WORD_SIZE
 
+typedef struct BigInt BigInt;
+
 struct BigInt
 {
     BASE_TYPE data[BIGINT_ARR_SIZE];
 };
+
+/* Initialisation. */
+BIGINT_FUNC void bigIntInitialise(BigInt* b);
+BIGINT_FUNC void bigIntFromInt(BigInt* b, const BASE_TYPE i);
+
+/* Conversion. */
+BIGINT_FUNC void bigIntToString(BigInt* b);
 
 #endif
