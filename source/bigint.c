@@ -41,6 +41,13 @@ void bigIntFromString(BigInt* b, char* string, const int n)
     }
 }
 
+BASE_TYPE bigIntToInt(BigInt* b)
+{
+    assert(b);
+
+    return b->data[0];
+}
+
 void bigIntToString(BigInt* b, char* string, const int n)
 {
     assert(b);

@@ -32,6 +32,7 @@ BIGINT_FUNC void bigIntFromInt(BigInt* b, const BASE_TYPE i);
 BIGINT_FUNC void bigIntFromString(BigInt* b, char* string, const int n);
 
 /* Conversion. */
+BIGINT_FUNC BASE_TYPE bigIntToInt(BigInt* b);
 BIGINT_FUNC void bigIntToString(BigInt* b, char* string, const int n);
 
 #endif
