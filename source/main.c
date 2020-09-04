@@ -51,6 +51,16 @@ int main(int argc, const char** argv)
                 bigIntFromString(input2, argv[3], strlen(argv[3]));
                 bigIntXor(input1, input2, output);
             }
+            else if (!strncmp(argv[1], "add", 3))
+            {
+                bigIntFromString(input2, argv[3], strlen(argv[3]));
+                bigIntAdd(input1, input2, output);
+            }
+            else if (!strncmp(argv[1], "subtract", 8))
+            {
+                bigIntFromString(input2, argv[3], strlen(argv[3]));
+                bigIntSubtract(input1, input2, output);
+            }
             else UNRECOGNISED_COMMAND;
         }
         else if (argc == 3)

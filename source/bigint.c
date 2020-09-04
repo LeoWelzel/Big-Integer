@@ -93,6 +93,45 @@ void bigIntToString(BigInt* b, char* string, const int n)
     string[n - firstNonZero] = 0;
 }
 
+void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output)
+{
+    assert(input1);
+    assert(input2);
+    assert(output);
+
+    DOUBLE_BASE_TYPE result;
+    BASE_TYPE carry = 0;
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    {
+        result = input1->data[i] + input2->data[i] + carry;
+
+        if (result > FULL_BASE_TYPE) carry = 1;
+        else carry = 0;
+
+        output->data[i] = result & FULL_BASE_TYPE;
+    }
+}
+
+void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output)
+{
+    assert(input1);
+    assert(input2);
+    assert(output);
+
+    BASE_TYPE take = 0, result;
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    {
+        result = input1->data[i] - input2->data[i] - take;
+        
+        if (result >> (WORD_SIZE * 8 - 1)) take = 1;
+        else take = 0;
+
+        output->data[i] = result;
+    }
+}
+
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
 {
     assert(input);
@@ -114,7 +153,7 @@ void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
         /* Shift word over. */
         output->data[i] = (output->data[i] << numBits)
             |
-        /* Include spillover from lower word.. */
+        /* Include spillover from lower word. */
         (output->data[i - 1] >> (8 * WORD_SIZE - numBits));
     
     output->data[0] <<= numBits;
