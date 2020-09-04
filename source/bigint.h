@@ -13,12 +13,12 @@ extern "C"
 
 #define BASE_TYPE           unsigned int
 #define DOUBLE_BASE_TYPE    unsigned long long int
-#define WORD_SIZE           (sizeof(BASE_TYPE))
+#define WORD_SIZE           (int)(sizeof(BASE_TYPE))
 #define SPRINTF_FORMAT_STR  "%.08x"
 #define SSCANF_FORMAT_STR    "%8x"
 
 /* Use 1024 bit integers for now. */
-#define BIGINT_ARR_SIZE     (1024 / (WORD_SIZE * 8))
+#define BIGINT_ARR_SIZE     (int)(1024 / (WORD_SIZE * 8))
 
 typedef struct BigInt BigInt;
 

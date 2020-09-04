@@ -5,7 +5,11 @@
 
 int main(int argc, const char** argv)
 {
-    if (argc <= 1) return 0;
+    if (argc <= 1)
+    {
+        /* Any non-console tests can go here. */
+        return 0;
+    }
 
     if (!strncmp(argv[1], "lshift", 6))
     {
@@ -17,7 +21,6 @@ int main(int argc, const char** argv)
         if (argc < 4) return 0;
         consoleRShift(argv[2], argv[3]);
     }
-
-
+    
     return 0;
 }

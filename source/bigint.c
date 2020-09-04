@@ -78,11 +78,11 @@ void bigIntToString(BigInt* b, char* string, const int n)
 
     /* Count leading zeroes. */
     int firstNonZero = 0;
-    while (string[firstNonZero] == '0' && (firstNonZero + 1) < n)
+    while (string[firstNonZero] == '0')
         firstNonZero++;
     
     /* Ensure zero does not return an empty string. */
-    if (firstNonZero == BIGINT_ARR_SIZE / 4)
+    if (string[firstNonZero] == '\0')
         firstNonZero--;
     
     for (int i = 0; i < n - firstNonZero; i++)
@@ -103,18 +103,20 @@ void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
     if (numWords)
     {
         lShiftArray(output, numWords);
-        numBits -= numWords * (8 * WORD_SIZE);
+        numBits -= numWords * 8 * WORD_SIZE;
     }
+
+    if (!numBits) return;
 
     /* Shift bits over inside words. */    
     for (int i = BIGINT_ARR_SIZE - 1; i > 0; i--)
         /* Shift word over. */
-        output->data[i] = (input->data[i] << numBits)
+        output->data[i] = (output->data[i] << numBits)
             |
         /* Include spillover from lower word.. */
-        (input->data[i - 1] >> (8 * WORD_SIZE - numBits));
+        (output->data[i - 1] >> (8 * WORD_SIZE - numBits));
     
-    output->data[0] = input->data[0] << numBits;
+    output->data[0] <<= numBits;
 }
 
 void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
@@ -131,14 +133,16 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
         numBits -= numWords * (8 * WORD_SIZE);
     }
 
+    if (!numBits) return;
+
     /* Shift bits over inside words. */
     for (int i = 0; i < BIGINT_ARR_SIZE - 1; i++)
-        output->data[i] = (input->data[i] >> numBits
+        output->data[i] = (output->data[i] >> numBits
             |
         /* Include spillover from higher word. */
-        (input->data[i + 1] << (8 * WORD_SIZE - numBits)));
+        (output->data[i + 1] << (8 * WORD_SIZE - numBits)));
 
-    output->data[BIGINT_ARR_SIZE - 1] = input->data[BIGINT_ARR_SIZE - 1] >> numBits;
+    output->data[BIGINT_ARR_SIZE - 1] >>= numBits;
 }
 
 static void lShiftArray(BigInt* b, const int numElements)

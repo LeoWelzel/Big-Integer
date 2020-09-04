@@ -6,3 +6,6 @@ bin/
 
 # CMake
 build/
+
+# Python testing
+*.pyc

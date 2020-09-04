@@ -8,7 +8,7 @@ void consoleLShift(const char* arg1, const char* arg2)
 
     int bitShift = 0;
 
-    sscanf(arg2, SSCANF_FORMAT_STR, &bitShift);
+    sscanf(arg2, "%i", &bitShift);
     bigIntFromString(&input, arg1, strlen(arg1));
     bigIntLShift(&input, &output, bitShift);
 
@@ -23,7 +23,7 @@ void consoleRShift(const char* arg1, const char* arg2)
 
     int bitShift = 0;
 
-    sscanf(arg2, SSCANF_FORMAT_STR, &bitShift);
+    sscanf(arg2, "%i", &bitShift);
     bigIntFromString(&input, arg1, strlen(arg1));
     bigIntRShift(&input, &output, bitShift);
 
