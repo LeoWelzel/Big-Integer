@@ -6,6 +6,7 @@ static void rShiftArray(BigInt* b, const int numElements);
 void bigIntInitialise(BigInt* b)
 {
     assert(b);
+
     for (int i = 0; i < BIGINT_ARR_SIZE; i++)
         b->data[i] = 0;
 }
@@ -173,6 +174,15 @@ void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output)
 
     for (int i = 0; i < BIGINT_ARR_SIZE; i++)
         output->data[i] = input1->data[i] ^ input2->data[i];
+}
+
+void bigIntComplement(const BigInt* input, BigInt* output)
+{
+    assert(input);
+    assert(output);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+        output->data[i] = ~input->data[i];
 }
 
 static void lShiftArray(BigInt* b, const int numElements)

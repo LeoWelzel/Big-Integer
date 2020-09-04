@@ -1,6 +1,8 @@
 if __name__ == "__main__": import util
 else: from . import util
 
+import random
+
 def testLShift(number, shiftBy):
     assert(shiftBy >= 0)
     result = hex((number << shiftBy) & util.bitMask)[2:]
@@ -36,10 +38,15 @@ def testXor(number1, number2):
         util.toBigIntString(number1), util.toBigIntString(number2))
     )
 
+def testComplement(number):
+    result = hex((~number) & util.bitMask)[2:]
+
+    return util.test(result, "")
+
 def testShifts(printing):
     for i in range(util.attempts):
         number = util.randomInRange()
-        shift = util.randomInRange()
+        shift = random.randint(0, util.numBits)
 
         if not testLShift(number, shift):
             if printing: print("Error in lshift.")
@@ -65,9 +72,14 @@ def testBinaryOps(printing):
     if printing: print("Binary operation tests completed.")
     return True
 
+def testUnaryOps(printing):
+    for i in range(util.attempts):
+        num1 = util.randomInRange()
+        # if not 
+
 def testAll(printing = True):
-    testShifts(printing)
-    testBinaryOps(printing)
+    if not testShifts(printing): return False
+    if not testBinaryOps(printing): return False
     
     if printing: print("Bitwise tests successful.")
     return True

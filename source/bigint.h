@@ -43,6 +43,8 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits);
 void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntAnd(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output);
+void bigIntComplement(const BigInt* input, BigInt* output);
+
 #ifdef __cplusplus
 }
 #endif
