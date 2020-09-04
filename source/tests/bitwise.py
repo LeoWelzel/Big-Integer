@@ -1,8 +1,6 @@
 if __name__ == "__main__": import util
 else: from . import util
 
-import random
-
 def testLShift(number, shiftBy):
     assert(shiftBy >= 0)
     result = hex((number << shiftBy) & util.bitMask)[2:]
@@ -17,16 +15,62 @@ def testRShift(number, shiftBy):
 
     return util.test(result, "rshift {0} {1}".format(nString, shiftBy))
 
-def testAll(printing = True):
+def testOr(number1, number2):
+    result = hex((number1 | number2) & util.bitMask)[2:]
+    
+    return util.test(result, "or {0} {1}".format(
+        util.toBigIntString(number1), util.toBigIntString(number2))
+    )
+
+def testAnd(number1, number2):
+    result = hex((number1 & number2) & util.bitMask)[2:]
+    
+    return util.test(result, "and {0} {1}".format(
+        util.toBigIntString(number1), util.toBigIntString(number2))
+    )
+
+def testXor(number1, number2):
+    result = hex((number1 ^ number2) & util.bitMask)[2:]
+    
+    return util.test(result, "xor {0} {1}".format(
+        util.toBigIntString(number1), util.toBigIntString(number2))
+    )
+
+def testShifts(printing):
     for i in range(util.attempts):
-        number = random.randint(0, util.bitMask)
-        shift = random.randint(0, util.numBits)
+        number = util.randomInRange()
+        shift = util.randomInRange()
 
         if not testLShift(number, shift):
+            if printing: print("Error in lshift.")
             return False
         if not testRShift(number, shift):
+            if printing: print("Error in rshift.")
             return False
+    if printing: print("Shift tests completed.")
+    return True
+
+def testBinaryOps(printing):
+    for i in range(util.attempts):
+        num1, num2 = util.randomInRange(), util.randomInRange()
+        if not testOr(num1, num2):
+            if printing: print("Error in or.")
+            return False
+        if not testAnd(num1, num2):
+            if printing: print("Error in and.")
+            return False
+        if not testXor(num1, num2):
+            if printing: print("Error in xor.")
+            return False
+    if printing: print("Binary operation tests completed.")
+    return True
+
+def testAll(printing = True):
+    testShifts(printing)
+    testBinaryOps(printing)
+    
     if printing: print("Bitwise tests successful.")
+    return True
 
 if __name__ == "__main__":
     testAll()
