@@ -15,7 +15,7 @@ extern "C"
 #define DOUBLE_BASE_TYPE    unsigned long long int
 #define WORD_SIZE           (int)(sizeof(BASE_TYPE))
 #define SPRINTF_FORMAT_STR  "%.08x"
-#define SSCANF_FORMAT_STR    "%8x"
+#define SSCANF_FORMAT_STR   "%8x"
 
 /* Use 1024 bit integers for now. */
 #define BIGINT_ARR_SIZE     (int)(1024 / (WORD_SIZE * 8))
@@ -40,7 +40,9 @@ void bigIntToString(BigInt* b, char* string, const int n);
 /* Bitwise operations. */
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits);
 void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits);
-
+void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output);
+void bigIntAnd(const BigInt* input1, const BigInt* input2, BigInt* output);
+void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output);
 #ifdef __cplusplus
 }
 #endif

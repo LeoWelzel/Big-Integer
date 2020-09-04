@@ -14,6 +14,10 @@ extern "C"
 void consoleLShift(const char* arg1, const char* arg2);
 void consoleRShift(const char* arg1, const char* arg2);
 
+void consoleAnd(const char* arg1, const char* arg2);
+void consoleOr(const char* arg1, const char* arg2);
+void consoleXor(const char* arg1, const char* arg2);
+
 #ifdef __cplusplus
 }
 #endif

@@ -145,6 +145,36 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
     output->data[BIGINT_ARR_SIZE - 1] >>= numBits;
 }
 
+void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output)
+{
+    assert(input1);
+    assert(input2);
+    assert(output);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+        output->data[i] = input1->data[i] | input2->data[i];
+}
+
+void bigIntAnd(const BigInt* input1, const BigInt* input2, BigInt* output)
+{
+    assert(input1);
+    assert(input2);
+    assert(output);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+        output->data[i] = input1->data[i] & input2->data[i];
+}
+
+void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output)
+{
+    assert(input1);
+    assert(input2);
+    assert(output);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+        output->data[i] = input1->data[i] ^ input2->data[i];
+}
+
 static void lShiftArray(BigInt* b, const int numElements)
 {
     assert(b);
