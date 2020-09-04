@@ -1,24 +1,23 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "bigint.h"
+#include "console.h"
 
-int main()
+int main(int argc, const char** argv)
 {
-    BigInt bigInt;
-    const int stringSize = 256;
+    if (argc <= 1) return 0;
 
-    char inputString[32];
-    strcpy(inputString, "1234567890123456789012345678901");
+    if (!strncmp(argv[1], "lshift", 6))
+    {
+        if (argc < 4) return 0;
+        consoleLShift(argv[2], argv[3]);
+    }
+    else if (!strncmp(argv[1], "rshift", 6))
+    {
+        if (argc < 4) return 0;
+        consoleRShift(argv[2], argv[3]);
+    }
 
-    bigIntFromString(&bigInt, inputString, 32);
-    char string[stringSize], string2[stringSize];
-    bigIntToString(&bigInt, string, stringSize);
-    printf("%s\n", string);
 
-    rShiftArray(&bigInt, 1);
-    // int x = 5;
-    bigIntToString(&bigInt, string, stringSize);
-    printf(string);
     return 0;
 }

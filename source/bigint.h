@@ -1,24 +1,24 @@
 #ifndef BIG_INTEGER_H_INCLUDED
 #define BIG_INTEGER_H_INCLUDED
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
-
-#ifdef __cplusplus
-    #define BIGINT_FUNC extern "C"
-#else
-    #define BIGINT_FUNC
-#endif
 
 #define BASE_TYPE           unsigned int
 #define DOUBLE_BASE_TYPE    unsigned long long int
-#define WORD_SIZE           sizeof(BASE_TYPE)
+#define WORD_SIZE           (sizeof(BASE_TYPE))
 #define SPRINTF_FORMAT_STR  "%.08x"
 #define SSCANF_FORMAT_STR    "%8x"
 
 /* Use 1024 bit integers for now. */
-#define BIGINT_ARR_SIZE     1024 / (WORD_SIZE * 8)
+#define BIGINT_ARR_SIZE     (1024 / (WORD_SIZE * 8))
 
 typedef struct BigInt BigInt;
 
@@ -28,18 +28,21 @@ struct BigInt
 };
 
 /* Initialisation. */
-BIGINT_FUNC void bigIntInitialise(BigInt* b);
-BIGINT_FUNC void bigIntFromInt(BigInt* b, const BASE_TYPE i);
-BIGINT_FUNC void bigIntFromString(BigInt* b, char* string, const int n);
+void bigIntInitialise(BigInt* b);
+void bigIntCopy(const BigInt* input, BigInt* output);
+void bigIntFromInt(BigInt* b, const BASE_TYPE i);
+void bigIntFromString(BigInt* b, const char* string, const int n);
 
 /* Conversion. */
-BIGINT_FUNC BASE_TYPE bigIntToInt(BigInt* b);
-BIGINT_FUNC void bigIntToString(BigInt* b, char* string, const int n);
+BASE_TYPE bigIntToInt(BigInt* b);
+void bigIntToString(BigInt* b, char* string, const int n);
 
 /* Bitwise operations. */
-BIGINT_FUNC void bigIntLShift(BigInt* input, BigInt* output, unsigned int numBits);
+void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits);
+void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits);
 
-BIGINT_FUNC void lShiftArray(BigInt* b, const int numElements);
-BIGINT_FUNC void rShiftArray(BigInt* b, const int numElements);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,7 +1,7 @@
 #include "bigint.h"
 
-// static void lShiftArray(BigInt* b, const int numElements);
-// static void rShiftArray(BigInt* b, const int numElements);
+static void lShiftArray(BigInt* b, const int numElements);
+static void rShiftArray(BigInt* b, const int numElements);
 
 void bigIntInitialise(BigInt* b)
 {
@@ -10,14 +10,23 @@ void bigIntInitialise(BigInt* b)
         b->data[i] = 0;
 }
 
+void bigIntCopy(const BigInt* input, BigInt* output)
+{
+    assert(input);
+    assert(output);
+
+    memcpy(output->data, input->data, sizeof(input->data));
+}
+
 void bigIntFromInt(BigInt* b, const BASE_TYPE i)
 {
     assert(b);
+
     bigIntInitialise(b);
     b->data[0] = i;
 }
 
-void bigIntFromString(BigInt* b, char* string, const int n)
+void bigIntFromString(BigInt* b, const char* string, const int n)
 {
     assert(b);
     assert(string);
@@ -47,7 +56,6 @@ void bigIntFromString(BigInt* b, char* string, const int n)
 BASE_TYPE bigIntToInt(BigInt* b)
 {
     assert(b);
-
     return b->data[0];
 }
 
@@ -84,33 +92,75 @@ void bigIntToString(BigInt* b, char* string, const int n)
     string[n - firstNonZero] = 0;
 }
 
-void bigIntLShift(BigInt* input, BigInt* output, unsigned int numBits)
+void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
 {
     assert(input);
     assert(output);
 
-    /* If the number of bits to shift is greater than the number of bits in a word, shift array */
-
-    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    bigIntCopy(input, output);
+    /* If the number of bits to shift is greater than the number of bits in a word, shift array. */
+    const int numWords = numBits / (8 * WORD_SIZE);
+    if (numWords)
     {
-
+        lShiftArray(output, numWords);
+        numBits -= numWords * (8 * WORD_SIZE);
     }
+
+    /* Shift bits over inside words. */    
+    for (int i = BIGINT_ARR_SIZE - 1; i > 0; i--)
+        /* Shift word over. */
+        output->data[i] = (input->data[i] << numBits)
+            |
+        /* Include spillover from lower word.. */
+        (input->data[i - 1] >> (8 * WORD_SIZE - numBits));
+    
+    output->data[0] = input->data[0] << numBits;
 }
 
-void lShiftArray(BigInt* b, const int numElements)
+void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
 {
+    assert(input);
+    assert(output);
+
+    bigIntCopy(input, output);
+    /* If the number of bits to shift is greater than the number of bits in a word, shift array. */
+    const int numWords = numBits / (8 * WORD_SIZE);
+    if (numWords)
+    {
+        rShiftArray(output, numWords);
+        numBits -= numWords * (8 * WORD_SIZE);
+    }
+
+    /* Shift bits over inside words. */
+    for (int i = 0; i < BIGINT_ARR_SIZE - 1; i++)
+        output->data[i] = (input->data[i] >> numBits
+            |
+        /* Include spillover from higher word. */
+        (input->data[i + 1] << (8 * WORD_SIZE - numBits)));
+
+    output->data[BIGINT_ARR_SIZE - 1] = input->data[BIGINT_ARR_SIZE - 1] >> numBits;
+}
+
+static void lShiftArray(BigInt* b, const int numElements)
+{
+    assert(b);
+    assert(numElements >= 0);
     int i;
-    for (i = BIGINT_ARR_SIZE; i >= numElements; i--)
+
+    for (i = BIGINT_ARR_SIZE - 1; i >= numElements; i--)
         b->data[i] = b->data[i - numElements];
-    for (i = 0; i < numElements; i++)
+    for (; i >= 0; i--)
         b->data[i] = 0;
 }
 
-void rShiftArray(BigInt* b, const int numElements)
+static void rShiftArray(BigInt* b, const int numElements)
 {
+    assert(b);
+    assert(numElements >= 0);
     int i;
-    for (i = 0; i < BIGINT_ARR_SIZE - numElements; i++)
+
+    for (i = 0; i < (int)(BIGINT_ARR_SIZE - numElements); i++)
         b->data[i] = b->data[i + numElements];
-    for (i = BIGINT_ARR_SIZE - 1; i >= BIGINT_ARR_SIZE - numElements; i--)
+    for (; i < BIGINT_ARR_SIZE; i++)
         b->data[i] = 0;
 }
