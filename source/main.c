@@ -69,6 +69,10 @@ int main(int argc, const char** argv)
             {
                 bigIntComplement(input1, output);
             }
+            if (!strncmp(argv[1], "assign", 6))
+            {
+                bigIntCopy(input1, output);
+            }
             else UNRECOGNISED_COMMAND;
         }
         else UNRECOGNISED_COMMAND;

@@ -72,11 +72,6 @@ def testBinaryOps(printing):
     if printing: print("Binary operation tests completed.")
     return True
 
-def testUnaryOps(printing):
-    for i in range(util.attempts):
-        num1 = util.randomInRange()
-        # if not 
-
 def testAll(printing = True):
     if not testShifts(printing): return False
     if not testBinaryOps(printing): return False

@@ -25,6 +25,7 @@ typedef struct BigInt BigInt;
 
 struct BigInt
 {
+    int numElements;
     BASE_TYPE data[BIGINT_ARR_SIZE];
 };
 

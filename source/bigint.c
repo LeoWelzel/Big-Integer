@@ -9,6 +9,8 @@ void bigIntInitialise(BigInt* b)
 
     for (int i = 0; i < BIGINT_ARR_SIZE; i++)
         b->data[i] = 0;
+    
+    b->numElements = 0;
 }
 
 void bigIntCopy(const BigInt* input, BigInt* output)
@@ -17,6 +19,7 @@ void bigIntCopy(const BigInt* input, BigInt* output)
     assert(output);
 
     memcpy(output->data, input->data, sizeof(input->data));
+    output->numElements = input->numElements;
 }
 
 void bigIntFromInt(BigInt* b, const BASE_TYPE i)
@@ -40,18 +43,15 @@ void bigIntFromString(BigInt* b, const char* string, const int n)
 
     /* Start here because we are passed a hex string. Each character represents 4 bits. */
     int stringIndex = n - 2 * WORD_SIZE, arrayIndex = 0;
-    BASE_TYPE buffer;
 
     while (stringIndex >= 0)
     {
-        buffer = 0;
-
-        sscanf(&string[stringIndex], SSCANF_FORMAT_STR, &buffer);
-
-        b->data[arrayIndex] = buffer;
+        sscanf(&string[stringIndex], SSCANF_FORMAT_STR, &b->data[arrayIndex]);
         arrayIndex++;
         stringIndex -= 2 * WORD_SIZE;
     }
+
+    b->numElements = arrayIndex;
 }
 
 BASE_TYPE bigIntToInt(BigInt* b)
@@ -68,7 +68,7 @@ void bigIntToString(BigInt* b, char* string, const int n)
     assert((n % 2) == 0);
 
     /* Iterate backward over array. */
-    int arrayIndex = BIGINT_ARR_SIZE - 1, stringIndex = 0;
+    int arrayIndex = b->numElements - 1, stringIndex = 0;
 
     while (arrayIndex >= 0 && (stringIndex + 1) < n)
     {
@@ -102,6 +102,7 @@ void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output)
     DOUBLE_BASE_TYPE result;
     BASE_TYPE carry = 0;
 
+    // TODO: highestIndex
     for (int i = 0; i < BIGINT_ARR_SIZE; i++)
     {
         result = input1->data[i] + input2->data[i] + carry;
@@ -121,6 +122,7 @@ void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output)
 
     BASE_TYPE take = 0, result;
 
+    // TODO: highestIndex
     for (int i = 0; i < BIGINT_ARR_SIZE; i++)
     {
         result = input1->data[i] - input2->data[i] - take;
@@ -148,8 +150,13 @@ void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
 
     if (!numBits) return;
 
+    /* Increment numElements if highest word spills over. */
+    if (output->data[output->numElements - 1] >> (8 * WORD_SIZE - numBits)
+        && output->numElements < BIGINT_ARR_SIZE)
+        output->numElements++;
+
     /* Shift bits over inside words. */    
-    for (int i = BIGINT_ARR_SIZE - 1; i > 0; i--)
+    for (int i = output->numElements - 1; i > 0; i--)
         /* Shift word over. */
         output->data[i] = (output->data[i] << numBits)
             |
@@ -176,13 +183,17 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
     if (!numBits) return;
 
     /* Shift bits over inside words. */
-    for (int i = 0; i < BIGINT_ARR_SIZE - 1; i++)
+    for (int i = 0; i < output->numElements - 1; i++)
         output->data[i] = (output->data[i] >> numBits
             |
         /* Include spillover from higher word. */
         (output->data[i + 1] << (8 * WORD_SIZE - numBits)));
 
-    output->data[BIGINT_ARR_SIZE - 1] >>= numBits;
+    output->data[output->numElements - 1] >>= numBits;
+
+    /* Decrement numElements if highest word truncated. */
+    if (!output->data[output->numElements - 1] && output->numElements > 0)
+        output->numElements--;
 }
 
 void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output)
@@ -191,7 +202,10 @@ void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
-    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
+    output->numElements = higher;
+
+    for (int i = 0; i < higher; i++)
         output->data[i] = input1->data[i] | input2->data[i];
 }
 
@@ -201,7 +215,10 @@ void bigIntAnd(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
-    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
+    output->numElements = higher;
+
+    for (int i = 0; i < higher; i++)
         output->data[i] = input1->data[i] & input2->data[i];
 }
 
@@ -211,7 +228,10 @@ void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
-    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
+    output->numElements = higher;
+
+    for (int i = 0; i < higher; i++)
         output->data[i] = input1->data[i] ^ input2->data[i];
 }
 
@@ -220,7 +240,9 @@ void bigIntComplement(const BigInt* input, BigInt* output)
     assert(input);
     assert(output);
 
-    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    output->numElements = input->numElements;
+
+    for (int i = 0; i < input->numElements; i++)
         output->data[i] = ~input->data[i];
 }
 
@@ -234,6 +256,9 @@ static void lShiftArray(BigInt* b, const int numElements)
         b->data[i] = b->data[i - numElements];
     for (; i >= 0; i--)
         b->data[i] = 0;
+    
+    b->numElements += numElements;
+    if (b->numElements > BIGINT_ARR_SIZE) b->numElements = BIGINT_ARR_SIZE;
 }
 
 static void rShiftArray(BigInt* b, const int numElements)
@@ -246,4 +271,7 @@ static void rShiftArray(BigInt* b, const int numElements)
         b->data[i] = b->data[i + numElements];
     for (; i < BIGINT_ARR_SIZE; i++)
         b->data[i] = 0;
+    
+    b->numElements -= numElements;
+    if (b->numElements < 0) b->numElements = 0;
 }
