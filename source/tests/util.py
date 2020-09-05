@@ -2,7 +2,8 @@ import subprocess, os, random
 
 binDir = "../../bin"
 numBits = 1024
-bitMask = (1 << numBits) - 1 
+bitMask = (1 << numBits) - 1
+maxInt = 2 ** 32
 
 # The default number of times a particular test is performed.
 attempts = 100
@@ -17,7 +18,7 @@ def getCmdOutput(command):
 def test(pythonResult, command):
     output = getCmdOutput(command)
     result = str(pythonResult) == output
-    if not result: print(command, output)
+    if not result: print(command, pythonResult, output)
     return result
 
 def toBigIntString(integer):

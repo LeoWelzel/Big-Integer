@@ -12,6 +12,7 @@ extern "C"
 #include <assert.h>
 
 #define BASE_TYPE           unsigned int
+#define SIGNED_BASE_TYPE    int
 #define FULL_BASE_TYPE      0xffffffff
 #define DOUBLE_BASE_TYPE    unsigned long long int
 #define WORD_SIZE           (int)(sizeof(BASE_TYPE))
@@ -42,6 +43,7 @@ void bigIntToString(BigInt* b, char* string, const int n);
 /* Arithemtic operations. */
 void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output);
+void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output);
 
 /* Bitwise operations. */
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits);

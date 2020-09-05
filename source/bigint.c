@@ -105,14 +105,14 @@ void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output)
     DOUBLE_BASE_TYPE result;
     BASE_TYPE carry = 0;
 
+    bigIntInitialise(output);
+
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
 
     for (int i = 0; i < higher; i++)
     {
         result = (DOUBLE_BASE_TYPE)input1->data[i] + input2->data[i] + carry;
-
         carry = (result > FULL_BASE_TYPE);
-
         output->data[i] = result & FULL_BASE_TYPE;
     }
 
@@ -133,15 +133,47 @@ void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output)
 
     BASE_TYPE take = 0, result;
 
-    // TODO: highestIndex
-    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    bigIntInitialise(output);
+
+    int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements,
+        
+        /* The highest index which is not negative. */
+        /* We want to avoid producing numbers prefixed by excessive 1s. */
+        highestPopulated = 0;
+
+    for (int i = 0; i < higher; i++)
     {
         result = input1->data[i] - input2->data[i] - take;
         
-        if (result >> (WORD_SIZE * 8 - 1)) take = 1;
+        /* If the first bit of the result is set, we need to deduct from the next word. */
+        if (input1->data[i] < input2->data[i] + take) take = 1;
         else take = 0;
 
-        output->data[i] = result;
+        output->data[i] = (BASE_TYPE)result;
+
+        if (~result) highestPopulated = i;
+    }
+
+    output->numElements = highestPopulated + 1;
+}
+
+void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output)
+{
+    assert(input1);
+    assert(input2);
+    assert(output);
+
+
+
+    /* Use long multiplication. */
+    bigIntInitialise(output);
+
+    for (int i = 0; i < input1->numElements; i++)
+    {
+        for (int j = 0; j < input2->numElements; j++)
+        {
+            
+        }
     }
 }
 
@@ -214,6 +246,8 @@ void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
+    bigIntInitialise(output);
+
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
     output->numElements = higher;
 
@@ -226,6 +260,8 @@ void bigIntAnd(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input1);
     assert(input2);
     assert(output);
+
+    bigIntInitialise(output);
 
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
     output->numElements = higher;
@@ -240,6 +276,8 @@ void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
+    bigIntInitialise(output);
+
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
     output->numElements = higher;
 
@@ -252,7 +290,7 @@ void bigIntComplement(const BigInt* input, BigInt* output)
     assert(input);
     assert(output);
 
-    output->numElements = input->numElements;
+    bigIntCopy(input, output);
 
     for (int i = 0; i < input->numElements; i++)
         output->data[i] = ~input->data[i];

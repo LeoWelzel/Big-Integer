@@ -10,18 +10,24 @@ int main(int argc, const char** argv)
     static const int STRING_LENGTH = BIGINT_ARR_SIZE * sizeof(BASE_TYPE) * 2;
     char result[STRING_LENGTH];
  
-    if (argc <= 1)
-    {
-        /* Any non-console tests can go here. */
-        return 0;
-    }
-
     int bitShift;
     BigInt* input1 = malloc(sizeof(BigInt)),
         *input2 = malloc(sizeof(BigInt)),
         *output = malloc(sizeof(BigInt));
 
-    if (argc >= 3)
+    if (argc <= 1)
+    {
+        /* Any non-console tests can go here. */
+        const char* first = "10e44e69565448fc67aa8ea761466c00",
+            *second = "206bb209c7133248e9bb97810e4157d1";
+        bigIntFromString(input1, first, strlen(first));
+        bigIntFromString(input2, second, strlen(second));
+        bigIntSubtract(input1, input2, output);
+        bigIntToString(output, result, STRING_LENGTH);
+        printf("%s\n", result);
+        return 0;
+    }
+    else if (argc >= 3)
     {
         bigIntFromString(input1, argv[2], strlen(argv[2]));
         if (argc == 4)
