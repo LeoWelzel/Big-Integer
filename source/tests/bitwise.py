@@ -54,7 +54,7 @@ def testShifts(printing):
         if not testRShift(number, shift):
             if printing: print("Error in rshift.")
             return False
-    if printing: print("Shift tests completed.")
+    if printing: print("Shift tests successful.")
     return True
 
 def testBinaryOps(printing):
@@ -69,7 +69,7 @@ def testBinaryOps(printing):
         if not testXor(num1, num2):
             if printing: print("Error in xor.")
             return False
-    if printing: print("Binary operation tests completed.")
+    if printing: print("Binary operation tests successful.")
     return True
 
 def testAll(printing = True):

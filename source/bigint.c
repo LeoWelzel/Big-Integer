@@ -28,6 +28,8 @@ void bigIntFromInt(BigInt* b, const BASE_TYPE i)
 
     bigIntInitialise(b);
     b->data[0] = i;
+
+    b->numElements = 1;
 }
 
 void bigIntFromString(BigInt* b, const char* string, const int n)
@@ -36,6 +38,7 @@ void bigIntFromString(BigInt* b, const char* string, const int n)
     assert(string);
     assert(n > 0);
     assert((n % 2) == 0);
+
     /* Ensure the string length is a multiple of 2 * the basic type to allow array population. */
     assert(n % sizeof(BASE_TYPE) * 2 == 0);
 
@@ -57,7 +60,7 @@ void bigIntFromString(BigInt* b, const char* string, const int n)
 BASE_TYPE bigIntToInt(BigInt* b)
 {
     assert(b);
-    return b->data[0];
+    return b->numElements ? b->data[0] : 0;
 }
 
 void bigIntToString(BigInt* b, char* string, const int n)
@@ -102,16 +105,24 @@ void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output)
     DOUBLE_BASE_TYPE result;
     BASE_TYPE carry = 0;
 
-    // TODO: highestIndex
-    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
-    {
-        result = input1->data[i] + input2->data[i] + carry;
+    int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
 
-        if (result > FULL_BASE_TYPE) carry = 1;
-        else carry = 0;
+    for (int i = 0; i < higher; i++)
+    {
+        result = (DOUBLE_BASE_TYPE)input1->data[i] + input2->data[i] + carry;
+
+        carry = (result > FULL_BASE_TYPE);
 
         output->data[i] = result & FULL_BASE_TYPE;
     }
+
+    if (carry && higher < BIGINT_ARR_SIZE)
+    {
+        output->data[higher] = carry;
+        higher++;
+    }
+    
+    output->numElements = higher;
 }
 
 void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output)
@@ -172,6 +183,7 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
     assert(output);
 
     bigIntCopy(input, output);
+
     /* If the number of bits to shift is greater than the number of bits in a word, shift array. */
     const int numWords = numBits / (8 * WORD_SIZE);
     if (numWords)

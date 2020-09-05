@@ -1,8 +1,6 @@
 if __name__ == "__main__": import util
 else: from . import util
 
-import random
-
 def testAssign(number):
     result = hex(number)[2:]
     nString = util.toBigIntString(number)
@@ -15,7 +13,7 @@ def testAll(printing = True):
         if not testAssign(n):
             if printing: print("Error in assignment.")
             return False
-    if printing: print("Assignment tests completed.")
+    if printing: print("Assignment tests sucessful.")
     return True
 
 if __name__ == "__main__":
