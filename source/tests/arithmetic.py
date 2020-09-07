@@ -1,5 +1,4 @@
-if __name__ == "__main__": import util
-else: from . import util
+import util
 
 def testAdd(number1, number2):
     result = hex((number1 + number2) & util.bitMask)[2:]
@@ -69,7 +68,7 @@ def testAll(printing = True):
     if not testSubtracts(printing): return False
     if not testMultiplies(printing): return False
 
-    if printing: print("Arithemetic tests successful.")
+    if printing: print("Arithmetic tests successful.")
     return True
 
 if __name__ == "__main__":

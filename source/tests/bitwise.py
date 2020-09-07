@@ -1,7 +1,4 @@
-if __name__ == "__main__": import util
-else: from . import util
-
-import random
+import util, random
 
 def testLShift(number, shiftBy):
     assert(shiftBy >= 0)

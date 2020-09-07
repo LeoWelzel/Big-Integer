@@ -1,5 +1,4 @@
-if __name__ == "__main__": import util
-else: from . import util
+import util
 
 def testAssign(number):
     result = hex(number)[2:]
