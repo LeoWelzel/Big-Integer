@@ -163,19 +163,40 @@ void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output)
     }
 }
 
-void bigIntDivide(const BigInt* numerator, const BigInt* divisor, BigInt* output)
+void bigIntDivideMod(const BigInt* numerator, const BigInt* divisor, BigInt* quotientOutput,
+    BigInt* remainderOutput)
 {
     /* Refer to https://en.wikipedia.org/wiki/Division_algorithm#Integer_division_(unsigned)_with_remainder
      * for pseudocode and explanation. */
 
     assert(numerator);
     assert(divisor);
-    assert(output);
+    assert(quotientOutput);
+    assert(remainderOutput);
 
     /* Primitive check for division by zero. */
     assert(divisor->data[0]);
 
-    
+    BigInt quotient, remainder;
+
+    bigIntInitialise(&quotient);
+    bigIntInitialise(&remainder);
+
+    /* Number of bits used by numerator. */
+    int numBits = 0;
+
+    for (int i = BIGINT_ARR_SIZE - 1; i >= 0; i--)
+        if (numerator->data[i])
+        {
+            const int leadingZeroes = COUNT_LEADING_ZEROES(numerator->data[i]);
+            numBits = (i + 1) * (8 * WORD_SIZE) - leadingZeroes;
+            break;
+        } 
+
+    for (int i = numBits - 1; i >= 0; i--)
+    {
+        // TODO: lshift remainder by one bit
+    }
 }
 
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
