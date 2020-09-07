@@ -21,6 +21,7 @@ extern "C"
 
 /* Use 1024 bit integers for now. */
 const int WORD_SIZE = (int)(sizeof(BASE_TYPE));
+const int BITS_PER_WORD = 8 * WORD_SIZE;
 const int BIGINT_ARR_SIZE = (int)(1024 / (WORD_SIZE * 8));
 
 typedef struct BigInt BigInt;
@@ -45,6 +46,16 @@ void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntDivideMod(const BigInt* numerator, const BigInt* divisor, BigInt* quotient, BigInt* remainder);
+
+enum ComparisonOutcome
+{
+    GREATER_THAN = 1,
+    EQUAL = 0,
+    LESS_THAN = -GREATER_THAN
+};
+
+/* Comparison operations. */
+int bigIntCompare(const BigInt* left, const BigInt* right);
 
 /* Bitwise operations. */
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits);

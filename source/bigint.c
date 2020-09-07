@@ -4,6 +4,9 @@ static void lShiftArray(BigInt* b, const int numElements);
 static void rShiftArray(BigInt* b, const int numElements);
 static void lShiftOneBit(BigInt* b);
 static void rShiftOneBit(BigInt* b);
+/* The last bit is bit 0. */
+static int nthBitSet(const BigInt* b, const int n);
+static void setNthBit(const BigInt* b, const int n);
 
 void bigIntInitialise(BigInt* b)
 {
@@ -190,13 +193,18 @@ void bigIntDivideMod(const BigInt* numerator, const BigInt* divisor, BigInt* quo
         if (numerator->data[i])
         {
             const int leadingZeroes = COUNT_LEADING_ZEROES(numerator->data[i]);
-            numBits = (i + 1) * (8 * WORD_SIZE) - leadingZeroes;
+            numBits = (i + 1) * BITS_PER_WORD - leadingZeroes;
             break;
         } 
 
     for (int i = numBits - 1; i >= 0; i--)
     {
-        // TODO: lshift remainder by one bit
+        lShiftOneBit(&remainder);
+        
+        if (nthBitSet(numerator, i))
+            remainder.data[0] |= 1;
+
+        // TODO: return here after 
     }
 }
 
@@ -208,11 +216,11 @@ void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
     bigIntCopy(input, output);
 
     /* If the number of bits to shift is greater than the number of bits in a word, shift array. */
-    const int numWords = numBits / (8 * WORD_SIZE);
+    const int numWords = numBits / BITS_PER_WORD;
     if (numWords)
     {
         lShiftArray(output, numWords);
-        numBits -= numWords * 8 * WORD_SIZE;
+        numBits -= numWords * BITS_PER_WORD;
     }
 
     if (!numBits) return;
@@ -223,7 +231,7 @@ void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
         output->data[i] = (output->data[i] << numBits)
             |
         /* Include spillover from lower word. */
-        (output->data[i - 1] >> (8 * WORD_SIZE - numBits));
+        (output->data[i - 1] >> (BITS_PER_WORD - numBits));
     
     output->data[0] <<= numBits;
 }
@@ -236,11 +244,11 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
     bigIntCopy(input, output);
 
     /* If the number of bits to shift is greater than the number of bits in a word, shift array. */
-    const int numWords = numBits / (8 * WORD_SIZE);
+    const int numWords = numBits / BITS_PER_WORD;
     if (numWords)
     {
         rShiftArray(output, numWords);
-        numBits -= numWords * (8 * WORD_SIZE);
+        numBits -= numWords * BITS_PER_WORD;
     }
 
     if (!numBits) return;
@@ -250,7 +258,7 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
         output->data[i] = (output->data[i] >> numBits
             |
         /* Include spillover from higher word. */
-        (output->data[i + 1] << (8 * WORD_SIZE - numBits)));
+        (output->data[i + 1] << (BITS_PER_WORD - numBits)));
 
     output->data[BIGINT_ARR_SIZE - 1] >>= numBits;
 }
@@ -336,4 +344,22 @@ static void rShiftOneBit(BigInt* b)
     for (int i = 0; i < BIGINT_ARR_SIZE - 1; i++)
         b->data[i] = (b->data[i] >> 1) | (b->data[i + 1] << ((WORD_SIZE * 8 - 1)));
     b->data[BIGINT_ARR_SIZE - 1] >>= 1;
+}
+
+static int nthBitSet(const BigInt* b, const int n)
+{
+    assert(b);
+    assert(n >= 0);
+    assert(n < BIGINT_ARR_SIZE);
+
+    return b->data[n / BITS_PER_WORD] >> (n % BITS_PER_WORD);
+}
+
+static void setNthBit(const BigInt* b, const int n)
+{
+    assert(b);
+    assert(n >= 0);
+    assert(n < BIGINT_ARR_SIZE);
+
+    b->data[n / BITS_PER_WORD] |= (BASE_TYPE)1 << (n % BITS_PER_WORD);
 }
