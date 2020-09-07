@@ -14,15 +14,17 @@ int main(int argc, const char** argv)
     BigInt* input1 = malloc(sizeof(BigInt)),
         *input2 = malloc(sizeof(BigInt)),
         *output = malloc(sizeof(BigInt));
+    bigIntInitialise(input1);
+    bigIntInitialise(input2);
+    bigIntInitialise(output);
 
     if (argc <= 1)
     {
         /* Any non-console tests can go here. */
-        const char* first = "10e44e69565448fc67aa8ea761466c00",
-            *second = "206bb209c7133248e9bb97810e4157d1";
-        bigIntFromString(input1, first, strlen(first));
-        bigIntFromString(input2, second, strlen(second));
-        bigIntSubtract(input1, input2, output);
+        bigIntFromString(input1, "1111111111111111", 16);
+        bigIntFromString(input2, "1111111111111111", 16);
+        bigIntMultiply(input1, input2, output);
+        printf("Multiplied.\n");
         bigIntToString(output, result, STRING_LENGTH);
         printf("%s\n", result);
         return 0;
@@ -66,6 +68,11 @@ int main(int argc, const char** argv)
             {
                 bigIntFromString(input2, argv[3], strlen(argv[3]));
                 bigIntSubtract(input1, input2, output);
+            }
+            else if (!strncmp(argv[1], "multiply", 8))
+            {
+                bigIntFromString(input2, argv[3], strlen(argv[3]));
+                bigIntMultiply(input1, input2, output);
             }
             else UNRECOGNISED_COMMAND;
         }

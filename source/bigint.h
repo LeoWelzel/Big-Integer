@@ -33,7 +33,7 @@ struct BigInt
 /* Initialisation. */
 void bigIntInitialise(BigInt* b);
 void bigIntCopy(const BigInt* input, BigInt* output);
-void bigIntFromInt(BigInt* b, const BASE_TYPE i);
+void bigIntFromInt(BigInt* b, const DOUBLE_BASE_TYPE i);
 void bigIntFromString(BigInt* b, const char* string, const int n);
 
 /* Conversion. */

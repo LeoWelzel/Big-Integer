@@ -3,6 +3,7 @@
 static void lShiftArray(BigInt* b, const int numElements);
 static void rShiftArray(BigInt* b, const int numElements);
 
+
 void bigIntInitialise(BigInt* b)
 {
     assert(b);
@@ -22,14 +23,17 @@ void bigIntCopy(const BigInt* input, BigInt* output)
     output->numElements = input->numElements;
 }
 
-void bigIntFromInt(BigInt* b, const BASE_TYPE i)
+void bigIntFromInt(BigInt* b, const DOUBLE_BASE_TYPE i)
 {
     assert(b);
 
     bigIntInitialise(b);
-    b->data[0] = i;
 
-    b->numElements = 1;
+    /* Depends on this specific type setup. */
+    b->data[0] = i;
+    b->data[1] = i >> 32;
+
+    b->numElements = b->data[1] ? 2 : 1;
 }
 
 void bigIntFromString(BigInt* b, const char* string, const int n)
@@ -105,8 +109,6 @@ void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output)
     DOUBLE_BASE_TYPE result;
     BASE_TYPE carry = 0;
 
-    bigIntInitialise(output);
-
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
 
     for (int i = 0; i < higher; i++)
@@ -133,8 +135,6 @@ void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output)
 
     BASE_TYPE take = 0, result;
 
-    bigIntInitialise(output);
-
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements,
         
         /* The highest index which is not negative. */
@@ -155,6 +155,9 @@ void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output)
     }
 
     output->numElements = highestPopulated + 1;
+
+    for (int i = output->numElements; i < BIGINT_ARR_SIZE; i++)
+        output->data[i] = 0;
 }
 
 void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output)
@@ -163,17 +166,30 @@ void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
-
+    DOUBLE_BASE_TYPE result;
+    BigInt rowSum, tempProduct;
 
     /* Use long multiplication. */
-    bigIntInitialise(output);
-
     for (int i = 0; i < input1->numElements; i++)
     {
+        bigIntInitialise(&rowSum);
+
         for (int j = 0; j < input2->numElements; j++)
         {
-            
+            if (i + j < BIGINT_ARR_SIZE)
+            {
+                bigIntInitialise(&tempProduct);
+                result = (DOUBLE_BASE_TYPE)input1->data[i] *
+                    (DOUBLE_BASE_TYPE)input2->data[j];
+    
+                bigIntFromInt(&tempProduct, result);
+                lShiftArray(&tempProduct, i + j);
+
+                bigIntAdd(&tempProduct, &rowSum, &rowSum);
+            }
         }
+
+        bigIntAdd(&rowSum, output, output);
     }
 }
 
@@ -246,8 +262,6 @@ void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
-    bigIntInitialise(output);
-
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
     output->numElements = higher;
 
@@ -261,8 +275,6 @@ void bigIntAnd(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input2);
     assert(output);
 
-    bigIntInitialise(output);
-
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
     output->numElements = higher;
 
@@ -275,8 +287,6 @@ void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output)
     assert(input1);
     assert(input2);
     assert(output);
-
-    bigIntInitialise(output);
 
     int higher = (input1->numElements > input2->numElements) ? input1->numElements : input2->numElements;
     output->numElements = higher;
