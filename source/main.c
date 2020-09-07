@@ -98,9 +98,7 @@ int main(int argc, const char** argv)
             else if (!strncmp(argv[1], "divide", 6))
             {
                 bigIntFromString(input2, argv[3], strlen(argv[3]));
-                bigIntDivideMod(input1, input2, output2, output1);
-                bigIntToString(output2, result, STRING_LENGTH);
-                printf("%s\n", result);
+                bigIntDivideMod(input1, input2, output1, output2);
             }
             else UNRECOGNISED_COMMAND;
         }

@@ -31,6 +31,13 @@ def testMultiply(number1, number2):
         util.toBigIntString(number1), util.toBigIntString(number2))
     )
 
+def testDivide(number1, number2):
+    result = hex((number1 // number2) & util.bitMask)[2:]
+
+    return util.test(result, "divide {0} {1}".format(
+        util.toBigIntString(number1), util.toBigIntString(number2))
+    )
+
 def testAdds(printing):
     for i in range(util.attempts):
         n1, n2 = util.randomInRange(), util.randomInRange()
@@ -61,11 +68,24 @@ def testMultiplies(printing):
     if printing: print("Multiply tests successful.")
     return True
 
+def testDivides(printing):
+    for i in range(util.attempts):
+        n1, n2, n3 = util.randomInRange(), util.randomInRange(), util.random.randint(0, 1 << (util.numBits // 2))
+
+        if not testDivide(n1, n2):
+            if printing: print("Error in testDivide.")
+            return False
+        if not testDivide(n1, n3):
+            if printing: print("Error in testDivide.")
+            return False
+    if printing: print("Divide tests successful.")
+    return True
 
 def testAll(printing = True):
     if not testAdds(printing): return False
     if not testSubtracts(printing): return False
     if not testMultiplies(printing): return False
+    if not testDivides(printing): return False
 
     if printing: print("Arithmetic tests successful.")
     return True
