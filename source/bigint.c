@@ -2,7 +2,8 @@
 
 static void lShiftArray(BigInt* b, const int numElements);
 static void rShiftArray(BigInt* b, const int numElements);
-
+static void lShiftOneBit(BigInt* b);
+static void rShiftOneBit(BigInt* b);
 
 void bigIntInitialise(BigInt* b)
 {
@@ -317,4 +318,22 @@ static void rShiftArray(BigInt* b, const int numElements)
         b->data[i] = b->data[i + numElements];
     for (; i < BIGINT_ARR_SIZE; i++)
         b->data[i] = 0;
+}
+
+static void lShiftOneBit(BigInt* b)
+{
+    assert(b);
+
+    for (int i = BIGINT_ARR_SIZE - 1; i > 0; i--)
+        b->data[i] = (b->data[i] << 1) | (b->data[i - 1] >> (WORD_SIZE * 8 - 1));
+    b->data[0] <<= 1;
+}
+
+static void rShiftOneBit(BigInt* b)
+{
+    assert(b);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE - 1; i++)
+        b->data[i] = (b->data[i] >> 1) | (b->data[i + 1] << ((WORD_SIZE * 8 - 1)));
+    b->data[BIGINT_ARR_SIZE - 1] >>= 1;
 }
