@@ -163,12 +163,28 @@ void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output)
     }
 }
 
+void bigIntDivide(const BigInt* numerator, const BigInt* divisor, BigInt* output)
+{
+    /* Refer to https://en.wikipedia.org/wiki/Division_algorithm#Integer_division_(unsigned)_with_remainder
+     * for pseudocode and explanation. */
+
+    assert(numerator);
+    assert(divisor);
+    assert(output);
+
+    /* Primitive check for division by zero. */
+    assert(divisor->data[0]);
+
+    
+}
+
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
 {
     assert(input);
     assert(output);
 
     bigIntCopy(input, output);
+
     /* If the number of bits to shift is greater than the number of bits in a word, shift array. */
     const int numWords = numBits / (8 * WORD_SIZE);
     if (numWords)

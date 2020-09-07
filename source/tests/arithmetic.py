@@ -41,7 +41,6 @@ def testAdds(printing):
     if printing: print("Add tests successful.")
     return True
 
-# TODO: make utility bulk testing function.
 def testSubtracts(printing):
     for i in range(util.attempts):
         n1, n2 = util.randomInRange(), util.randomInRange()

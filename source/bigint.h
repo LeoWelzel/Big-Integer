@@ -43,6 +43,7 @@ void bigIntToString(BigInt* b, char* string, const int n);
 void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output);
+void bigIntDivide(const BigInt* numerator, const BigInt* divisor, BigInt* output);
 
 /* Bitwise operations. */
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits);
