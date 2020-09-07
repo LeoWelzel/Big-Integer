@@ -20,9 +20,10 @@ extern "C"
 #define COUNT_LEADING_ZEROES    __builtin_clz
 
 /* Use 1024 bit integers for now. */
-const int WORD_SIZE = (int)(sizeof(BASE_TYPE));
-const int BITS_PER_WORD = 8 * WORD_SIZE;
-const int BIGINT_ARR_SIZE = (int)(1024 / (WORD_SIZE * 8));
+#define WORD_SIZE               ((int)(sizeof(BASE_TYPE)))
+#define BITS_PER_WORD           (8 * WORD_SIZE)
+#define TOTAL_BITS              (1024)
+#define BIGINT_ARR_SIZE         ((int)(TOTAL_BITS / BITS_PER_WORD))
 
 typedef struct BigInt BigInt;
 

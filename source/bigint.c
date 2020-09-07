@@ -6,7 +6,7 @@ static void lShiftOneBit(BigInt* b);
 static void rShiftOneBit(BigInt* b);
 /* The last bit is bit 0. */
 static int nthBitSet(const BigInt* b, const int n);
-static void setNthBit(const BigInt* b, const int n);
+static void setNthBit(BigInt* b, const int n);
 
 void bigIntInitialise(BigInt* b)
 {
@@ -195,7 +195,7 @@ void bigIntDivideMod(const BigInt* numerator, const BigInt* divisor, BigInt* quo
             const int leadingZeroes = COUNT_LEADING_ZEROES(numerator->data[i]);
             numBits = (i + 1) * BITS_PER_WORD - leadingZeroes;
             break;
-        } 
+        }
 
     for (int i = numBits - 1; i >= 0; i--)
     {
@@ -204,8 +204,31 @@ void bigIntDivideMod(const BigInt* numerator, const BigInt* divisor, BigInt* quo
         if (nthBitSet(numerator, i))
             remainder.data[0] |= 1;
 
-        // TODO: return here after 
+        if (bigIntCompare(&remainder, divisor) != LESS_THAN)
+        {
+            bigIntSubtract(&remainder, divisor, &remainder);
+            setNthBit(&quotient, i);
+        }
     }
+
+    bigIntCopy(&quotient, quotientOutput);
+    bigIntCopy(&remainder, remainderOutput);
+}
+
+int bigIntCompare(const BigInt* left, const BigInt* right)
+{
+    assert(left);
+    assert(right);
+
+    for (int i = BIGINT_ARR_SIZE - 1; i >= 0; i--)
+    {
+        if (left->data[i] > right->data[i])
+            return GREATER_THAN;
+        else if (left->data[i] < right->data[i])
+            return LESS_THAN;
+    }
+
+    return EQUAL;
 }
 
 void bigIntLShift(const BigInt* input, BigInt* output, unsigned int numBits)
@@ -350,16 +373,16 @@ static int nthBitSet(const BigInt* b, const int n)
 {
     assert(b);
     assert(n >= 0);
-    assert(n < BIGINT_ARR_SIZE);
+    assert(n < TOTAL_BITS);
 
-    return b->data[n / BITS_PER_WORD] >> (n % BITS_PER_WORD);
+    return (b->data[n / BITS_PER_WORD] >> (n % BITS_PER_WORD)) & 1;
 }
 
-static void setNthBit(const BigInt* b, const int n)
+static void setNthBit(BigInt* b, const int n)
 {
     assert(b);
     assert(n >= 0);
-    assert(n < BIGINT_ARR_SIZE);
+    assert(n < TOTAL_BITS);
 
     b->data[n / BITS_PER_WORD] |= (BASE_TYPE)1 << (n % BITS_PER_WORD);
 }
