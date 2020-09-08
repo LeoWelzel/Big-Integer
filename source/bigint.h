@@ -39,7 +39,8 @@ void bigIntFromInt(BigInt* b, const DOUBLE_BASE_TYPE i);
 void bigIntFromString(BigInt* b, const char* string, const int n);
 
 /* Conversion. */
-BASE_TYPE bigIntToInt(BigInt* b);
+BASE_TYPE bigIntToInt(const BigInt* b);
+DOUBLE_BASE_TYPE bigIntToDoubleBase(const BigInt* b);
 void bigIntToString(const BigInt* b, char* string, const int n);
 
 /* Arithemtic operations. */

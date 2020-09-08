@@ -56,10 +56,19 @@ void bigIntFromString(BigInt* b, const char* string, const int n)
     }
 }
 
-BASE_TYPE bigIntToInt(BigInt* b)
+BASE_TYPE bigIntToInt(const BigInt* b)
 {
     assert(b);
     return b->data[0];
+}
+
+DOUBLE_BASE_TYPE bigIntToDoubleBase(const BigInt* b)
+{
+    assert(b);
+
+    DOUBLE_BASE_TYPE output = b->data[0];
+    output |= (b->data[1] << BITS_PER_WORD);
+    return output;
 }
 
 void bigIntToString(const BigInt* b, char* string, const int n)

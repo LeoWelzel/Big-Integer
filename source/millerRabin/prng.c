@@ -18,9 +18,9 @@ U64 prngRand64(PRNG* p)
     return p->current * 2685821657736338717LL;
 }
 
-int prngRandInt(PRNG* p, const int lower, const int higher)
+U64 prngRandInt(PRNG* p, const U64 lower, const U64 higher)
 {
     assert(lower < higher);
 
-    return (int)(prngRand64(p) % (higher - lower)) + lower;
+    return (prngRand64(p) % (higher - lower)) + lower;
 }

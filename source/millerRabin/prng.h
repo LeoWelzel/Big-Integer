@@ -14,6 +14,6 @@ struct PRNG
 
 void prngSeed(PRNG* p, const U64 seed);
 U64 prngRand64(PRNG* p);
-int prngRandInt(PRNG* p, const int lower, const int higher);
+U64 prngRandInt(PRNG* p, const U64 lower, const U64 higher);
 
 #endif

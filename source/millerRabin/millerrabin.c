@@ -9,8 +9,6 @@ void initialiseVars()
     bigIntFromInt(&two, 2);
 }
 
-
-
 int millerRabin(const BigInt* input, const int iterations)
 {
     int result = bigIntCompare(input, &two);
@@ -20,14 +18,19 @@ int millerRabin(const BigInt* input, const int iterations)
     else if (result == EQUAL)
         return 1;
     
-    /* Write input as coefficient * 2 ^ power + 1. */
-    BigInt power, coefficient, random;
+    /* input = coefficient * 2 ^ power + 1 */
+    BigInt power, coefficient, inputDecremented, attempt, remainder, counter, holder, tempForComparison;
+    PRNG prng;
+    unsigned long long int upperBound;
 
     bigIntInitialise(&power);
-    bigIntCopy(input, &coefficient);
+    bigIntInitialise(&remainder);
 
-    /* Coefficient = input - 1. */
+    bigIntCopy(input, &coefficient);
     bigIntDecrement(&coefficient);
+
+    bigIntCopy(input, &inputDecremented);
+    bigIntDecrement(&inputDecremented);
 
     while (bigIntIsEven(&coefficient))
     {
@@ -35,11 +38,42 @@ int millerRabin(const BigInt* input, const int iterations)
         bigIntIncrement(&power);
     }
 
+    bigIntFromInt(&tempForComparison, 0xffffffffffffffffull);
+
+    if (bigIntCompare(input, &tempForComparison) == GREATER_THAN)
+        upperBound = 0xffffffffffffffffull;
+    else
+        upperBound = bigIntToDoubleBase(input);
+
+    int continueOuter;
+
     for (int i = 0; i < iterations; i++)
     {
+        continueOuter = 0;
+        // TODO: get upper bound on this.
+        bigIntFromInt(&attempt, prngRandInt(&prng, 2, upperBound));
 
+        bigIntModularExponent(&attempt, &coefficient, input, &remainder);
+
+        if (bigIntCompare(&remainder, &one) == EQUAL || bigIntCompare(&remainder, &inputDecremented))
+            continue;
+
+        bigIntInitialise(&counter);
+    
+        while (bigIntCompare(&counter, &power) != EQUAL)
+        {
+            /* remainder = (remainder ^ 2) % input */
+            bigIntInitialise(&holder);
+            bigIntMultiply(&remainder, &remainder, &holder);
+            bigIntMod(&holder, &input, &remainder);
+
+            /* if (remainder == input - 1) */
+            if (bigIntCompare(&remainder, &inputDecremented) == EQUAL)
+            {
+                continueOuter = 1;
+                break;
+            }
+            // TODO: continue from here
+        }
     }
-
-
-    PRNG temp;
 }
