@@ -2,8 +2,6 @@
 
 static void lShiftArray(BigInt* b, const int numElements);
 static void rShiftArray(BigInt* b, const int numElements);
-static void lShiftOneBit(BigInt* b);
-static void rShiftOneBit(BigInt* b);
 /* The last bit is bit 0. */
 static int nthBitSet(const BigInt* b, const int n);
 static void setNthBit(BigInt* b, const int n);
@@ -286,6 +284,24 @@ void bigIntRShift(const BigInt* input, BigInt* output, unsigned int numBits)
     output->data[BIGINT_ARR_SIZE - 1] >>= numBits;
 }
 
+void lShiftOneBit(BigInt* b)
+{
+    assert(b);
+
+    for (int i = BIGINT_ARR_SIZE - 1; i > 0; i--)
+        b->data[i] = (b->data[i] << 1) | (b->data[i - 1] >> (WORD_SIZE * 8 - 1));
+    b->data[0] <<= 1;
+}
+
+void rShiftOneBit(BigInt* b)
+{
+    assert(b);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE - 1; i++)
+        b->data[i] = (b->data[i] >> 1) | (b->data[i + 1] << ((WORD_SIZE * 8 - 1)));
+    b->data[BIGINT_ARR_SIZE - 1] >>= 1;
+}
+
 void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output)
 {
     assert(input1);
@@ -349,24 +365,6 @@ static void rShiftArray(BigInt* b, const int numElements)
         b->data[i] = b->data[i + numElements];
     for (; i < BIGINT_ARR_SIZE; i++)
         b->data[i] = 0;
-}
-
-static void lShiftOneBit(BigInt* b)
-{
-    assert(b);
-
-    for (int i = BIGINT_ARR_SIZE - 1; i > 0; i--)
-        b->data[i] = (b->data[i] << 1) | (b->data[i - 1] >> (WORD_SIZE * 8 - 1));
-    b->data[0] <<= 1;
-}
-
-static void rShiftOneBit(BigInt* b)
-{
-    assert(b);
-
-    for (int i = 0; i < BIGINT_ARR_SIZE - 1; i++)
-        b->data[i] = (b->data[i] >> 1) | (b->data[i + 1] << ((WORD_SIZE * 8 - 1)));
-    b->data[BIGINT_ARR_SIZE - 1] >>= 1;
 }
 
 static int nthBitSet(const BigInt* b, const int n)
