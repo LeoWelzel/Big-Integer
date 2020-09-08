@@ -40,13 +40,17 @@ void bigIntFromString(BigInt* b, const char* string, const int n);
 
 /* Conversion. */
 BASE_TYPE bigIntToInt(BigInt* b);
-void bigIntToString(BigInt* b, char* string, const int n);
+void bigIntToString(const BigInt* b, char* string, const int n);
 
 /* Arithemtic operations. */
 void bigIntAdd(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntSubtract(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntMultiply(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntDivideMod(const BigInt* numerator, const BigInt* divisor, BigInt* quotient, BigInt* remainder);
+void bigIntDivide(const BigInt* numerator, const BigInt* divisor, BigInt* quotient);
+void bigIntMod(const BigInt* numerator, const BigInt* divisor, BigInt* remainder);
+void bigIntIncrement(BigInt* input);
+void bigIntDecrement(BigInt* input);
 
 enum ComparisonOutcome
 {
@@ -67,6 +71,10 @@ void bigIntOr(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntAnd(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntXor(const BigInt* input1, const BigInt* input2, BigInt* output);
 void bigIntComplement(const BigInt* input, BigInt* output);
+
+/* Miscellaneous functions. */
+int bigIntIsEven(const BigInt* input);
+void bigIntModularExponent(const BigInt* base, const BigInt* exponent, const BigInt* mod, BigInt* output);
 
 #ifdef __cplusplus
 }

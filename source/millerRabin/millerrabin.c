@@ -9,6 +9,8 @@ void initialiseVars()
     bigIntFromInt(&two, 2);
 }
 
+
+
 int millerRabin(const BigInt* input, const int iterations)
 {
     int result = bigIntCompare(input, &two);
@@ -19,25 +21,24 @@ int millerRabin(const BigInt* input, const int iterations)
         return 1;
     
     /* Write input as coefficient * 2 ^ power + 1. */
-    BigInt power, coefficient, remainder;
+    BigInt power, coefficient, random;
 
     bigIntInitialise(&power);
     bigIntCopy(input, &coefficient);
 
     /* Coefficient = input - 1. */
-    bigIntSubtract(&coefficient, &one, &coefficient);
-    // TODO: replace above with decrement call
-    bigIntDivideMod(&coefficient, &two, &holder, &remainder);
+    bigIntDecrement(&coefficient);
 
-    /* while (coefficient % 2 == 0) */
-    while (bigIntCompare(&remainder, &zero) == EQUAL)
+    while (bigIntIsEven(&coefficient))
     {
         rShiftOneBit(&coefficient);
-        // TODO: increment call on power.
-        bigIntDivideMod(&coefficient, &two, &holder, &remainder);
+        bigIntIncrement(&power);
     }
 
+    for (int i = 0; i < iterations; i++)
+    {
 
+    }
 
 
     PRNG temp;

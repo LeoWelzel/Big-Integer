@@ -62,7 +62,7 @@ BASE_TYPE bigIntToInt(BigInt* b)
     return b->data[0];
 }
 
-void bigIntToString(BigInt* b, char* string, const int n)
+void bigIntToString(const BigInt* b, char* string, const int n)
 {
     assert(b);
     assert(string);
@@ -213,6 +213,49 @@ void bigIntDivideMod(const BigInt* numerator, const BigInt* divisor, BigInt* quo
     bigIntCopy(&remainder, remainderOutput);
 }
 
+void bigIntDivide(const BigInt* numerator, const BigInt* divisor, BigInt* quotient)
+{
+    assert(numerator);
+    assert(divisor);
+    assert(quotient);
+
+    BigInt temp;
+    bigIntDivideMod(numerator, divisor, quotient, &temp);
+}
+
+void bigIntMod(const BigInt* numerator, const BigInt* divisor, BigInt* remainder)
+{
+    assert(numerator);
+    assert(divisor);
+    assert(remainder);
+
+    BigInt temp;
+    bigIntDivideMod(numerator, divisor, &temp, remainder);
+}
+
+void bigIntIncrement(BigInt* input)
+{
+    assert(input);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    {
+        input->data[i]++;
+        if (input->data[i]) return;
+    }
+}
+
+void bigIntDecrement(BigInt* input)
+{
+    assert(input);
+
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+    {
+        input->data[i]--;
+
+        if (~input->data[i]) return;
+    }
+}
+
 int bigIntCompare(const BigInt* left, const BigInt* right)
 {
     assert(left);
@@ -341,6 +384,33 @@ void bigIntComplement(const BigInt* input, BigInt* output)
 
     for (int i = 0; i < BIGINT_ARR_SIZE; i++)
         output->data[i] = ~input->data[i];
+}
+
+int bigIntIsEven(const BigInt* input)
+{
+    assert(input);
+    return !(input->data[0] % 2);
+}
+
+void bigIntModularExponent(const BigInt* base, const BigInt* exponent, const BigInt* mod, BigInt* output)
+{
+    assert(base);
+    assert(exponent);
+    assert(mod);
+    assert(output);
+
+    BigInt holder, i;
+    bigIntInitialise(&holder);
+    bigIntInitialise(&i);
+    bigIntFromInt(output, 1);
+
+    while (bigIntCompare(&i, exponent) != EQUAL)
+    {
+        bigIntIncrement(&i);
+        bigIntInitialise(&holder);
+        bigIntMultiply(output, base, &holder);
+        bigIntMod(&holder, mod, output);
+    }
 }
 
 static void lShiftArray(BigInt* b, const int numElements)

@@ -30,6 +30,7 @@ int main(int argc, const char** argv)
     int bitShift;
     BigInt* input1 = malloc(sizeof(BigInt)),
         *input2 = malloc(sizeof(BigInt)),
+        *input3 = malloc(sizeof(BigInt)),
         *output1 = malloc(sizeof(BigInt)),
         *output2 = malloc(sizeof(BigInt));
     bigIntInitialise(input1);
@@ -40,20 +41,29 @@ int main(int argc, const char** argv)
     if (argc <= 1)
     {
         /* Any non-console tests can go here. */
-        bigIntFromInt(input1, 12);
-        bigIntFromInt(input2, 4);
-        bigIntDivideMod(input1, input2, output1, output2);
-        char result[STRING_LENGTH];
+        bigIntFromInt(input1, 9);
+        bigIntFromInt(input2, 2);
+        bigIntFromInt(input3, 4);
+
+        bigIntModularExponent(input1, input2, input3, output1);
         bigIntToString(output1, result, STRING_LENGTH);
-        printf("Quotient: {%s}. ", result);
-        bigIntToString(output2, result, STRING_LENGTH);
-        printf("Remainder: {%s}.\n", result);
+
+        printf("{%s}\n", result);
         return 0;
     }
     else if (argc >= 3)
     {
         bigIntFromString(input1, argv[2], strlen(argv[2]));
-        if (argc == 4)
+        if (argc == 5)
+        {
+            if (!strncmp(argv[1], "modexp", 6))
+            {
+                bigIntFromString(input2, argv[3], strlen(argv[3]));
+                bigIntFromString(input3, argv[4], strlen(argv[4]));
+                bigIntModularExponent(input1, input2, input3, output1);
+            }
+        }
+        else if (argc == 4)
         {
             if (!strncmp(argv[1], "lshift", 6))
             {
@@ -98,7 +108,12 @@ int main(int argc, const char** argv)
             else if (!strncmp(argv[1], "divide", 6))
             {
                 bigIntFromString(input2, argv[3], strlen(argv[3]));
-                bigIntDivideMod(input1, input2, output1, output2);
+                bigIntDivide(input1, input2, output1);
+            }
+            else if (!strncmp(argv[1], "mod", 3))
+            {
+                bigIntFromString(input2, argv[3], strlen(argv[3]));
+                bigIntMod(input1, input2, output1);
             }
             else UNRECOGNISED_COMMAND;
         }
@@ -108,9 +123,23 @@ int main(int argc, const char** argv)
             {
                 bigIntComplement(input1, output1);
             }
-            if (!strncmp(argv[1], "assign", 6))
+            else if (!strncmp(argv[1], "assign", 6))
             {
                 bigIntCopy(input1, output1);
+            }
+            else if (!strncmp(argv[1], "inc", 3))
+            {
+                bigIntIncrement(input1);
+                bigIntCopy(input1, output1);
+            }
+            else if (!strncmp(argv[1], "dec", 3))
+            {
+                bigIntDecrement(input1);
+                bigIntCopy(input1, output1);
+            }
+            else if (!strncmp(argv[1], "even", 4))
+            {
+                bigIntFromInt(output1, bigIntIsEven(input1));
             }
             else UNRECOGNISED_COMMAND;
         }
