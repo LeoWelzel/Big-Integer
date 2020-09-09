@@ -49,23 +49,25 @@ int millerRabin(const BigInt* input, const int iterations)
 
     for (int i = 0; i < iterations; i++)
     {
-        continueOuter = 0;
-        // TODO: get upper bound on this.
         bigIntFromInt(&attempt, prngRandInt(&prng, 2, upperBound));
-
+        /* remainder = (attempt ^ coefficient) % input; */
         bigIntModularExponent(&attempt, &coefficient, input, &remainder);
 
+        /* if (remainder == 1 || remainder == input - 1) */
         if (bigIntCompare(&remainder, &one) == EQUAL || bigIntCompare(&remainder, &inputDecremented))
             continue;
 
         bigIntInitialise(&counter);
-    
+
+        continueOuter = 0;
+
+        /* while (counter < power) */
         while (bigIntCompare(&counter, &power) != EQUAL)
         {
             /* remainder = (remainder ^ 2) % input */
             bigIntInitialise(&holder);
             bigIntMultiply(&remainder, &remainder, &holder);
-            bigIntMod(&holder, &input, &remainder);
+            bigIntMod(&holder, input, &remainder);
 
             /* if (remainder == input - 1) */
             if (bigIntCompare(&remainder, &inputDecremented) == EQUAL)
@@ -73,7 +75,10 @@ int millerRabin(const BigInt* input, const int iterations)
                 continueOuter = 1;
                 break;
             }
-            // TODO: continue from here
+            bigIntIncrement(&counter);
         }
+        if (!continueOuter)
+            return 0;
     }
+    return 1;
 }

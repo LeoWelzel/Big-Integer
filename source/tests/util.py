@@ -18,7 +18,7 @@ def getCmdOutput(command):
 def test(pythonResult, command):
     output = getCmdOutput(command)
     result = str(pythonResult) == output
-    if not result: print(command, pythonResult, output)
+    if not result: print(command, "Expected: {{{0}}} Actual: {{{1}}}".format(pythonResult, output))
     return result
 
 def toBigIntString(integer):

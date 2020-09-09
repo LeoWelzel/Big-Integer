@@ -75,6 +75,7 @@ void bigIntComplement(const BigInt* input, BigInt* output);
 
 /* Miscellaneous functions. */
 int bigIntIsEven(const BigInt* input);
+int bigIntIsZero(const BigInt* input);
 void bigIntModularExponent(const BigInt* base, const BigInt* exponent, const BigInt* mod, BigInt* output);
 
 #ifdef __cplusplus

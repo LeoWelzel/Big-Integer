@@ -121,4 +121,5 @@ def testAll(printing = True):
     return True
 
 if __name__ == "__main__":
-    testAll()
+    # testAll()
+    testModExps(True)

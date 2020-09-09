@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "millerRabin/millerrabin.h"
 #include "bigint.h"
 
 void printBitsULL(unsigned long long x)
@@ -41,14 +42,18 @@ int main(int argc, const char** argv)
     if (argc <= 1)
     {
         /* Any non-console tests can go here. */
-        bigIntFromInt(input1, 9);
-        bigIntFromInt(input2, 2);
-        bigIntFromInt(input3, 4);
+        // bigIntFromString(input1, "0000000a", 8);
+        // bigIntFromString(input2, "00000012", 8);
+        // bigIntFromString(input3, "000465c4", 8);
 
-        bigIntModularExponent(input1, input2, input3, output1);
-        bigIntToString(output1, result, STRING_LENGTH);
+        // bigIntModularExponent(input1, input2, input3, output1);
+        // bigIntToString(output1, result, 256);
+        // printf("%s\n", result);
+        bigIntFromString(input1, "0165ec17", 8);
+        bigIntToString(input1, result, STRING_LENGTH);
 
-        printf("{%s}\n", result);
+        int isPrime = millerRabin(input1, 15);
+        printf("Integer: {%s} Prime: {%i}.\n", result, isPrime);
         return 0;
     }
     else if (argc >= 3)
@@ -140,6 +145,10 @@ int main(int argc, const char** argv)
             else if (!strncmp(argv[1], "even", 4))
             {
                 bigIntFromInt(output1, bigIntIsEven(input1));
+            }
+            else if (!strncmp(argv[1], "prime", 5))
+            {
+                bigIntFromInt(output1, millerRabin(input1, 25));
             }
             else UNRECOGNISED_COMMAND;
         }

@@ -67,7 +67,7 @@ DOUBLE_BASE_TYPE bigIntToDoubleBase(const BigInt* b)
     assert(b);
 
     DOUBLE_BASE_TYPE output = b->data[0];
-    output |= (b->data[1] << BITS_PER_WORD);
+    output |= ((DOUBLE_BASE_TYPE)b->data[1] << BITS_PER_WORD);
     return output;
 }
 
@@ -401,6 +401,14 @@ int bigIntIsEven(const BigInt* input)
     return !(input->data[0] % 2);
 }
 
+int bigIntIsZero(const BigInt* input)
+{
+    assert(input);
+    for (int i = 0; i < BIGINT_ARR_SIZE; i++)
+        if (input->data[i]) return 0;
+    return 1;
+}
+
 void bigIntModularExponent(const BigInt* base, const BigInt* exponent, const BigInt* mod, BigInt* output)
 {
     assert(base);
@@ -408,17 +416,41 @@ void bigIntModularExponent(const BigInt* base, const BigInt* exponent, const Big
     assert(mod);
     assert(output);
 
-    BigInt holder, i;
-    bigIntInitialise(&holder);
-    bigIntInitialise(&i);
-    bigIntFromInt(output, 1);
+    BigInt holder, baseCopy, exponentCopy;
 
-    while (bigIntCompare(&i, exponent) != EQUAL)
+    bigIntInitialise(&holder);
+    bigIntInitialise(&baseCopy);
+    bigIntCopy(exponent, &exponentCopy);
+    bigIntFromInt(output, 1ull);
+
+    /* baseCopy = base / mod */
+    bigIntMod(base, mod, &baseCopy);
+
+    /* if (baseCopy == 0) return 0; */
+    if (bigIntIsZero(&baseCopy))
     {
-        bigIntIncrement(&i);
+        bigIntInitialise(output);
+        return;
+    }
+
+    while (!bigIntIsZero(&exponentCopy))
+    {
+        if (!bigIntIsEven(&exponentCopy))
+        {
+            /* output = (output * base) % mod; */
+            bigIntInitialise(&holder);
+            bigIntMultiply(output, &baseCopy, &holder);
+            bigIntInitialise(output);
+            bigIntMod(&holder, mod, output);
+        }
+
+        rShiftOneBit(&exponentCopy);
+
+        /* baseCopy = (baseCopy * baseCopy) % mod; */
         bigIntInitialise(&holder);
-        bigIntMultiply(output, base, &holder);
-        bigIntMod(&holder, mod, output);
+        bigIntMultiply(&baseCopy, &baseCopy, &holder);
+        bigIntInitialise(&baseCopy);
+        bigIntMod(&holder, mod, &baseCopy);
     }
 }
 
