@@ -9,5 +9,3 @@ build/
 
 # Python testing
 *.pyc
-
-source/main.c

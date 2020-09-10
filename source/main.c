@@ -25,40 +25,26 @@ int main(int argc, const char** argv)
 {
     #define UNRECOGNISED_COMMAND {printf("Unrecognised command entered."); return 0;}
 
-    static const int STRING_LENGTH = BIGINT_ARR_SIZE * sizeof(BASE_TYPE) * 2;
+    const int STRING_LENGTH = BIGINT_ARR_SIZE * sizeof(BASE_TYPE) * 2;
     char result[STRING_LENGTH];
  
-    int bitShift;
-    BigInt* input1 = malloc(sizeof(BigInt)),
-        *input2 = malloc(sizeof(BigInt)),
-        *input3 = malloc(sizeof(BigInt)),
-        *output1 = malloc(sizeof(BigInt)),
-        *output2 = malloc(sizeof(BigInt));
+    BigInt* input1 = malloc(sizeof(BigInt)), *input2, *input3,
+        *output1 = malloc(sizeof(BigInt));
+
     bigIntInitialise(input1);
-    bigIntInitialise(input2);
     bigIntInitialise(output1);
-    bigIntInitialise(output2);
 
     millerInitialiseVars();
 
-    if (argc <= 1)
+    if (argc >= 3)
     {
-        PRNG p;
-        /* Any non-console tests can go here. */
-        bigIntFromString(input1, "0000032b", 8);
-        bigIntToString(input1, result, STRING_LENGTH);
-
-        int isPrime = millerRabin(input1, 15);
-        printf("Integer: {%s} Prime: {%i}.\n", result, isPrime);
-        return 0;
-    }
-    else if (argc >= 3)
-    {
+        input2 = malloc(sizeof(BigInt));
         bigIntFromString(input1, argv[2], strlen(argv[2]));
         if (argc == 5)
         {
             if (!strncmp(argv[1], "modexp", 6))
             {
+                input3 = malloc(sizeof(BigInt));
                 bigIntFromString(input2, argv[3], strlen(argv[3]));
                 bigIntFromString(input3, argv[4], strlen(argv[4]));
                 bigIntModularExponent(input1, input2, input3, output1);
@@ -66,6 +52,7 @@ int main(int argc, const char** argv)
         }
         else if (argc == 4)
         {
+            int bitShift;
             if (!strncmp(argv[1], "lshift", 6))
             {
                 sscanf(argv[3], "%i", &bitShift);
