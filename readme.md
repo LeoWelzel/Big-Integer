@@ -1,3 +1,3 @@
-# Big integer
+# Big integers in C
 
-Recreational project intended to allow use of large integers in C.
+Recreational project written to allow use of large integers in C.

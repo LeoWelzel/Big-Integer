@@ -7,7 +7,6 @@ enable_testing()
 project(BigInt)
 include(CTest)
 
-# Add the files.
 file(GLOB_RECURSE SOURCES source/*.c source/*.h)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
