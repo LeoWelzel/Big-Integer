@@ -39,17 +39,13 @@ int main(int argc, const char** argv)
     bigIntInitialise(output1);
     bigIntInitialise(output2);
 
+    millerInitialiseVars();
+
     if (argc <= 1)
     {
+        PRNG p;
         /* Any non-console tests can go here. */
-        // bigIntFromString(input1, "0000000a", 8);
-        // bigIntFromString(input2, "00000012", 8);
-        // bigIntFromString(input3, "000465c4", 8);
-
-        // bigIntModularExponent(input1, input2, input3, output1);
-        // bigIntToString(output1, result, 256);
-        // printf("%s\n", result);
-        bigIntFromString(input1, "0165ec17", 8);
+        bigIntFromString(input1, "0000032b", 8);
         bigIntToString(input1, result, STRING_LENGTH);
 
         int isPrime = millerRabin(input1, 15);

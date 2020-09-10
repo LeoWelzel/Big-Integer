@@ -2,7 +2,7 @@
 
 static BigInt zero, one, two, holder;
 
-void initialiseVars()
+void millerInitialiseVars()
 {
     bigIntFromInt(&zero, 0);
     bigIntFromInt(&one, 1);
@@ -17,10 +17,13 @@ int millerRabin(const BigInt* input, const int iterations)
         return 0;
     else if (result == EQUAL)
         return 1;
+    else if (bigIntIsEven(input))
+        return 0;
     
     /* input = coefficient * 2 ^ power + 1 */
     BigInt power, coefficient, inputDecremented, attempt, remainder, counter, holder, tempForComparison;
     PRNG prng;
+    prngSeed(&prng, 0xe872a4af8d7ddd20);
     unsigned long long int upperBound;
 
     bigIntInitialise(&power);
@@ -43,7 +46,7 @@ int millerRabin(const BigInt* input, const int iterations)
     if (bigIntCompare(input, &tempForComparison) == GREATER_THAN)
         upperBound = 0xffffffffffffffffull;
     else
-        upperBound = bigIntToDoubleBase(input);
+        upperBound = bigIntToDoubleBase(input) - 1;
 
     int continueOuter;
 
@@ -53,8 +56,11 @@ int millerRabin(const BigInt* input, const int iterations)
         /* remainder = (attempt ^ coefficient) % input; */
         bigIntModularExponent(&attempt, &coefficient, input, &remainder);
 
+        int isOne = bigIntCompare(&remainder, &one),
+            isMinusOne = bigIntCompare(&remainder, &inputDecremented);
+
         /* if (remainder == 1 || remainder == input - 1) */
-        if (bigIntCompare(&remainder, &one) == EQUAL || bigIntCompare(&remainder, &inputDecremented))
+        if (bigIntCompare(&remainder, &one) == EQUAL || bigIntCompare(&remainder, &inputDecremented) == EQUAL)
             continue;
 
         bigIntInitialise(&counter);
@@ -70,7 +76,7 @@ int millerRabin(const BigInt* input, const int iterations)
             bigIntMod(&holder, input, &remainder);
 
             /* if (remainder == input - 1) */
-            if (bigIntCompare(&remainder, &inputDecremented) == EQUAL)
+            if (bigIntCompare(&remainder, &one) == EQUAL || bigIntCompare(&remainder, &inputDecremented) == EQUAL)
             {
                 continueOuter = 1;
                 break;
