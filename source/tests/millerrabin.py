@@ -40,7 +40,7 @@ def testPrimes(printing):
         if not testMiller(n):
             if printing: print("Error in testMiller.")
             return False
-    if printing: print("Miller-Rabin tests succeeded.")
+    if printing: print("Miller-Rabin tests successful.")
     return True
 
 def testAll(printing = True):
